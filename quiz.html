@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personalized Metabolic Health Assessment (2026)</title>
+  <meta name="description" content="Take this 60-second interactive wellness quiz to discover your personalized natural metabolic type and evidence-based morning protocol.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #059669;
+      --primary-dark: #047857;
+      --accent: #2563eb;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .top-notice {
+      background: #0f172a;
+      color: #f1f5f9;
+      text-align: center;
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    header {
+      background: #ffffff;
+      border-bottom: 2px solid var(--border);
+      padding: 16px 20px;
+      text-align: center;
+    }
+
+    .brand-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.5px;
+      text-transform: uppercase;
+    }
+
+    .brand-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-top: 2px;
+    }
+
+    .main-wrapper {
+      flex: 1;
+      max-width: 680px;
+      width: 100%;
+      margin: 24px auto;
+      padding: 0 16px;
+    }
+
+    .quiz-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 36px 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+      border: 1px solid var(--border);
+    }
+
+    @media (max-width: 600px) {
+      .quiz-card { padding: 24px 18px; }
+    }
+
+    /* Progress Bar */
+    .progress-container {
+      margin-bottom: 24px;
+    }
+
+    .progress-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .progress-bar-bg {
+      background: #e2e8f0;
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+      height: 100%;
+      width: 25%;
+      transition: width 0.3s ease;
+    }
+
+    /* Question Screen */
+    .question-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 8px;
+      line-height: 1.3;
+      text-align: center;
+    }
+
+    .question-sub {
+      font-size: 14px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .option-btn {
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      padding: 16px 20px;
+      border-radius: 12px;
+      text-align: left;
+      font-size: 16px;
+      font-weight: 600;
+      color: #1e293b;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+    }
+
+    .option-btn:hover {
+      border-color: var(--primary);
+      background: #f0fdf4;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.1);
+    }
+
+    .option-btn .arrow {
+      color: var(--text-muted);
+      font-weight: 800;
+    }
+
+    /* Loading Screen */
+    .loading-screen {
+      display: none;
+      text-align: center;
+      padding: 40px 10px;
+    }
+
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 5px solid #e2e8f0;
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 24px auto;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-step {
+      font-size: 15px;
+      font-weight: 600;
+      color: #334155;
+      margin-top: 10px;
+    }
+
+    /* Result Screen */
+    .result-screen {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-badge {
+      background: #dcfce7;
+      color: #166534;
+      font-size: 12px;
+      font-weight: 800;
+      padding: 6px 14px;
+      border-radius: 50px;
+      display: inline-block;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .result-title {
+      font-size: 26px;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.3;
+      margin-bottom: 14px;
+    }
+
+    .result-summary {
+      background: #f0fdf4;
+      border-left: 4px solid var(--primary);
+      padding: 16px 20px;
+      border-radius: 0 8px 8px 0;
+      margin: 20px 0;
+      font-size: 15px;
+      color: #14532d;
+    }
+
+    .solution-card {
+      background: #ffffff;
+      border: 2px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 24px;
+      margin: 24px 0;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    }
+
+    .solution-card h3 {
+      font-size: 20px;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+
+    .key-points {
+      list-style: none;
+      margin: 16px 0;
+      font-size: 15px;
+    }
+
+    .key-points li {
+      padding: 6px 0 6px 24px;
+      position: relative;
+    }
+
+    .key-points li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: var(--primary);
+      font-weight: 800;
+    }
+
+    /* Big CTA Button */
+    .btn-cta {
+      display: block;
+      width: 100%;
+      background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+      color: #ffffff;
+      font-size: 18px;
+      font-weight: 800;
+      text-align: center;
+      padding: 18px 24px;
+      border-radius: 50px;
+      text-decoration: none;
+      box-shadow: 0 6px 20px rgba(34, 197, 94, 0.35);
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border: none;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    .btn-cta:hover {
+      background: linear-gradient(180deg, #16a34a 0%, #15803d 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(34, 197, 94, 0.45);
+    }
+
+    /* Email Lead Magnet Box */
+    .email-optin-box {
+      background: #f8fafc;
+      border: 2px dashed #cbd5e1;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 28px;
+      text-align: center;
+    }
+
+    .email-optin-box h4 {
+      font-size: 16px;
+      color: #0f172a;
+      margin-bottom: 6px;
+    }
+
+    .email-optin-box p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+
+    .optin-form {
+      display: flex;
+      gap: 8px;
+      max-width: 440px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 500px) {
+      .optin-form { flex-direction: column; }
+    }
+
+    .optin-input {
+      flex: 1;
+      padding: 12px 16px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .optin-input:focus {
+      border-color: var(--primary);
+    }
+
+    .btn-optin {
+      background: #0f172a;
+      color: white;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+    }
+
+    footer {
+      max-width: 680px;
+      margin: 20px auto 40px auto;
+      padding: 0 16px;
+      font-size: 11px;
+      color: #94a3b8;
+      text-align: center;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-notice">
+    ⚡ 2026 CLINICAL METABOLIC ASSESSMENT &bull; FREE 60-SECOND EVALUATION
+  </div>
+
+  <header>
+    <div class="brand-title">Natural Health Discoveries</div>
+    <div class="brand-sub">Metabolic Research & Longevity Evaluation Lab</div>
+  </header>
+
+  <main class="main-wrapper">
+    <div class="quiz-card">
+
+      <!-- Progress Bar -->
+      <div class="progress-container" id="progress-container">
+        <div class="progress-labels">
+          <span id="step-label">Question 1 of 4</span>
+          <span id="percent-label">25%</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progress-fill"></div>
+        </div>
+      </div>
+
+      <!-- Question 1 -->
+      <div class="quiz-step" id="step-1">
+        <h2 class="question-title">What is your primary health & body goal this season?</h2>
+        <p class="question-sub">Select the primary outcome most important to your daily wellness.</p>
+        <div class="options-grid">
+          <button class="option-btn" onclick="selectAnswer(1, 'sugar', 'Sugar Defender')">
+            <span>📉 Balance Blood Sugar & Stop 3 PM Energy Crashes</span>
+            <span class="arrow">&rarr;</span>
+          </button>
+          <button class="option-btn" onclick="selectAnswer(1, 'liver', 'Liv Pure')">
+            <span>🌿 Purify Sluggish Liver & Melt Stubborn Midsection Fat</span>
+            <span class="arrow">&rarr;</span>
+          </button>
+          <button class="option-btn" onclick="selectAnswer(1, 'coffee', 'Java Burn')">
+            <span>☕ Effortlessly Multiply Morning Calorie Burn with Coffee</span>
+            <span class="arrow">&rarr;</span>
+          </button>
+          <button class="option-btn" onclick="selectAnswer(1, 'oral', 'ProDentim')">
+            <span>🦷 Restore Healthy Gums, Breath & Oral Microbiome</span>
+            <span class="arrow">&rarr;</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Question 2 -->
+      <div class="quiz-step" id="step-2" style="display: none;">
+        <h2 class="question-title">What time of day do you experience the biggest energy dip or cravings?</h2>
+        <p class="question-sub">Helps our algorithm identify your metabolic circadian curve.</p>
+        <div class="options-grid">
+          <button class="option-btn" onclick="selectAnswer(2, 'midday')">
+            <span>☀️ Mid-afternoon (Around 2:00 PM - 3:30 PM)</span>
+            <span class="arrow">&rarr;</span>
+          </button>
+          <button class="option-btn" onclick="selectAnswer(2, 'evening')">
+            <span>🌙 Late evening after dinner (Intense carb/sugar cravings)</span>
+            <span class="arrow">&rarr;</span>
+          </button>
+          <button class="option-btn" onclick="selectAnswer(2, 'morning')">
+            <span>🌅 Waking up tired even after 7-8 hours of sleep</span>
+            <span class="arrow">&rarr;</span>
+          </button>
+          <button class="option-btn" onclick="selectAnswer(2, 'constant')">
+            <span>⚡ Persistent low stamina and brain fog throughout the day</span>
+            <span class="arrow">&rarr;</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Question 3 -->
+      <div class="quiz-step" id="step-3" style="display: none;">
+        <h2 class="question-title">Which age bracket do you belong to?</h2>
+        <p class="question-sub">Enzyme production and cellular metabolism change significantly per decade.</p>
+        <div class="options-grid">
+          <button class="option-btn" onclick="selectAnswer(3, '35-44')">
+            <span>🔹 35 – 44 years old</span>
+            <span class="arrow">&rarr;</span>
+          </button>
+          <button class="option-btn" onclick="selectAnswer(3, '45-54')">
+            <span>🔹 45 – 54 years old</span>
+            <span class="arrow">&rarr;</span>
+          </button>
+          <button class="option-btn" onclick="selectAnswer(3, '55-64')">
+            <span>🔹 55 – 64 years old</span>
+            <span class="arrow">&rarr;</span>
+          </button>
+          <button class="option-btn" onclick="selectAnswer(3, '65+')">
+            <span>🔹 65 years or wiser</span>
+            <span class="arrow">&rarr;</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Question 4 -->
+      <div class="quiz-step" id="step-4" style="display: none;">
+        <h2 class="question-title">Have you tried strict diets or intense workouts with little to no lasting results?</h2>
+        <p class="question-sub">Identifies whether your metabolism is locked in 'dormant conservation mode'.</p>
+        <div class="options-grid">
+          <button class="option-btn" onclick="finishQuiz('yes')">
+            <span>⚠️ Yes, weight returns as soon as I stop the strict diet</span>
+            <span class="arrow">&rarr;</span>
+          </button>
+          <button class="option-btn" onclick="finishQuiz('moderate')">
+            <span>🔄 Moderate success, but stubborn belly fat refuses to move</span>
+            <span class="arrow">&rarr;</span>
+          </button>
+          <button class="option-btn" onclick="finishQuiz('new')">
+            <span>🌱 Starting a fresh natural routine for long-term health</span>
+            <span class="arrow">&rarr;</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Loading / Calculation Screen -->
+      <div class="loading-screen" id="loading-screen">
+        <div class="spinner"></div>
+        <h3 style="font-size: 20px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">Analyzing Your Metabolic Profile...</h3>
+        <p class="loading-step" id="loading-text">Correlating biological responses with 2026 clinical database...</p>
+      </div>
+
+      <!-- Result Screen -->
+      <div class="result-screen" id="result-screen">
+        <div style="text-align: center;">
+          <span class="result-badge">Custom Analysis Complete</span>
+          <h2 class="result-title" id="res-headline">Your Metabolic Profile Requires Targeted Botanical Support</h2>
+        </div>
+
+        <div class="result-summary" id="res-summary">
+          <strong>Key Clinical Insight:</strong> Based on your answers, your metabolic response indicates that conventional calorie counting will produce diminishing returns. Your body responds up to <strong>3x faster</strong> to targeted liquid plant bio-actives taken before breakfast.
+        </div>
+
+        <div class="solution-card">
+          <span style="font-size: 11px; font-weight: 800; color: #059669; text-transform: uppercase;">#1 Ranked Evidence-Based Protocol</span>
+          <h3 id="sol-title">Sugar Defender: Advanced Glucose & Metabolic Support</h3>
+          <p id="sol-desc" style="color: #475569; font-size: 15px; margin-top: 6px;">
+            A breakthrough sublingual botanical blend formulated with Eleuthero, Gymnema, and Maca to stabilize daily glycemic curves and reactivate resting fat oxidation.
+          </p>
+
+          <ul class="key-points" id="sol-bullets">
+            <li>Supports balanced blood sugar & eliminates 3 PM energy crashes</li>
+            <li>Reactivates dormant calorie-burning enzymes naturally</li>
+            <li>100% plant-based, non-GMO with 60-day money-back guarantee</li>
+          </ul>
+
+          <a href="#" id="sol-hoplink" class="btn-cta" target="_blank" rel="noopener noreferrer">
+            Watch Free Official Presentation &rarr;
+          </a>
+          <div style="text-align: center; font-size: 12px; color: #94a3b8; margin-top: 10px;">
+            🔒 Verified Supplier &bull; Zero Risk 60-Day Satisfaction Guarantee
+          </div>
+        </div>
+
+        <!-- Email Opt-in Lead Magnet -->
+        <div class="email-optin-box">
+          <h4>📥 Want the Free Accompanying Guide?</h4>
+          <p>Get our free 1-page PDF: <em>"The 7-Day AM Morning Ritual for Healthy Glucose & Daily Vitality"</em> delivered straight to your inbox.</p>
+          <form class="optin-form" onsubmit="handleOptin(event)">
+            <input type="email" class="optin-input" id="subscriber-email" placeholder="Enter your best email..." required>
+            <button type="submit" class="btn-optin">Send Free PDF &rarr;</button>
+          </form>
+          <p id="optin-msg" style="display: none; color: #16a34a; font-weight: 700; font-size: 13px; margin-top: 10px;">
+            ✓ Success! Check your inbox shortly for your free 7-Day Protocol PDF.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    <p>
+      <strong>Medical & Affiliate Disclaimer:</strong> The quiz assessment above is designed for educational and informational purposes only and does not constitute medical advice. Results may vary depending on individual biology. If you purchase through our links, we may earn an affiliate commission at zero additional cost to you.
+    </p>
+    <p style="margin-top: 8px;">
+      &copy; 2026 Natural Health Discoveries Lab. All rights reserved.
+    </p>
+  </footer>
+
+  <script>
+    let userGoal = 'sugar';
+
+    const SOLUTIONS = {
+      sugar: {
+        headline: "Your Profile Indicates Glycemic Volatility (Sugar Spikes)",
+        summary: "Your responses suggest that your afternoon fatigue and metabolic resistance are driven by rapid glucose fluctuations after meals. Stabilizing this curve allows your body to naturally access and burn stored body fat.",
+        name: "Sugar Defender: Natural Glucose & Metabolic Formula",
+        desc: "A concentrated sublingual liquid formula with 24 proven botanical ingredients designed to nourish insulin sensitivity and maintain steady all-day stamina.",
+        bullets: [
+          "Eliminates severe afternoon sugar cravings & fatigue",
+          "Supports healthy glucose balance naturally without stimulants",
+          "Includes full 60-day 100% money-back guarantee"
+        ],
+        hoplink: "https://hop.clickbank.net/?affiliate=natfit26&vendor=sugardef&tid=quiz_sugar"
+      },
+      liver: {
+        headline: "Your Profile Indicates Sluggish Hepatic (Liver) Lipid Processing",
+        summary: "Because the liver is the body's primary fat-burning filter, exposure to modern food additives can slow down resting metabolic rate. Purifying liver cells awakens natural thermogenesis 3x faster.",
+        name: "Liv Pure: Mediterranean Liver Purification Complex",
+        desc: "A proprietary dual-complex formula blending rare Greek island botanicals (Silymarin, Berberine, Resveratrol) to detoxify and reboot hepatic fat burning.",
+        bullets: [
+          "Optimizes liver fat-burning efficiency by up to 250%",
+          "Supports deep cellular detoxification & natural energy",
+          "Manufactured in FDA-inspected, GMP-certified US labs"
+        ],
+        hoplink: "https://hop.clickbank.net/?affiliate=natfit26&vendor=livpure&tid=quiz_liver"
+      },
+      coffee: {
+        headline: "Your Profile Responds Maximally to Morning Coffee Bio-Actives",
+        summary: "Your daily morning routine represents your highest-leverage metabolic window. Combining natural chlorogenic acids with synergistic botanicals amplifies calorie burn without changing your diet.",
+        name: "Java Burn: 10-Second Morning Coffee Metabolism Booster",
+        desc: "The world's first flavorless, patent-pending dissolvable formula engineered to work synergistically with morning coffee to ignite resting metabolism.",
+        bullets: [
+          "100% tasteless — dissolves instantly in any coffee roast",
+          "Clean, sustained energy with zero caffeine jitters or crashes",
+          "Backed by 60-day 100% satisfaction guarantee"
+        ],
+        hoplink: "https://hop.clickbank.net/?affiliate=natfit26&vendor=javaburn&tid=quiz_coffee"
+      },
+      oral: {
+        headline: "Your Profile Requires Oral Microbiome Repopulation",
+        summary: "Standard antiseptic mouthwashes often destroy friendly bacteria essential for teeth and gum health. Introducing 3.5 billion CFU good bacteria rebuilds your oral protective barrier naturally.",
+        name: "ProDentim: Advanced Oral Probiotic Soft Candy",
+        desc: "Doctor-formulated chewable probiotic containing 3.5 billion good bacterial strains that protect enamel, soothe gums, and eliminate bad breath permanently.",
+        bullets: [
+          "Repopulates healthy oral flora (L. Paracasei, B.lactis BL-04)",
+          "Promotes strong teeth, firm pink gums, and long-lasting fresh breath",
+          "All-natural, non-GMO with 60-day money-back guarantee"
+        ],
+        hoplink: "https://hop.clickbank.net/?affiliate=natfit26&vendor=prodentim&tid=quiz_oral"
+      }
+    };
+
+    function selectAnswer(step, val) {
+      if (step === 1) {
+        userGoal = val;
+      }
+
+      const nextStep = step + 1;
+      document.getElementById(`step-${step}`).style.display = 'none';
+      document.getElementById(`step-${nextStep}`).style.display = 'block';
+
+      // Update Progress
+      const percent = (nextStep / 4) * 100;
+      document.getElementById('step-label').textContent = `Question ${nextStep} of 4`;
+      document.getElementById('percent-label').textContent = `${percent}%`;
+      document.getElementById('progress-fill').style.width = `${percent}%`;
+    }
+
+    function finishQuiz() {
+      document.getElementById('step-4').style.display = 'none';
+      document.getElementById('progress-container').style.display = 'none';
+      document.getElementById('loading-screen').style.display = 'block';
+
+      const messages = [
+        "Analyzing metabolic circadian responses...",
+        "Cross-referencing 2026 clinical botanical trials...",
+        "Customizing your personal protocol..."
+      ];
+      let msgIndex = 0;
+      const interval = setInterval(() => {
+        msgIndex++;
+        if (msgIndex < messages.length) {
+          document.getElementById('loading-text').textContent = messages[msgIndex];
+        }
+      }, 900);
+
+      setTimeout(() => {
+        clearInterval(interval);
+        renderResults();
+      }, 3000);
+    }
+
+    function renderResults() {
+      document.getElementById('loading-screen').style.display = 'none';
+      document.getElementById('result-screen').style.display = 'block';
+
+      const sol = SOLUTIONS[userGoal] || SOLUTIONS.sugar;
+      document.getElementById('res-headline').textContent = sol.headline;
+      document.getElementById('res-summary').innerHTML = `<strong>Key Clinical Insight:</strong> ${sol.summary}`;
+      document.getElementById('sol-title').textContent = sol.name;
+      document.getElementById('sol-desc').textContent = sol.desc;
+
+      const ul = document.getElementById('sol-bullets');
+      ul.innerHTML = '';
+      sol.bullets.forEach(b => {
+        const li = document.createElement('li');
+        li.textContent = b;
+        ul.appendChild(li);
+      });
+
+      document.getElementById('sol-hoplink').href = sol.hoplink;
+    }
+
+    function handleOptin(e) {
+      e.preventDefault();
+      const email = document.getElementById('subscriber-email').value;
+      if (email) {
+        document.getElementById('optin-msg').style.display = 'block';
+        document.getElementById('subscriber-email').value = '';
+        // Save email locally or sync with email marketing tool
+        console.log("Subscriber captured:", email);
+      }
+    }
+  </script>
+</body>
+</html>
