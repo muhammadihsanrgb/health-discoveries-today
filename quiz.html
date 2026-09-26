@@ -523,15 +523,20 @@
 
         <!-- Email Opt-in Lead Magnet -->
         <div class="email-optin-box">
-          <h4>📥 Want the Free Accompanying Guide?</h4>
-          <p>Get our free 1-page PDF: <em>"The 7-Day AM Morning Ritual for Healthy Glucose & Daily Vitality"</em> delivered straight to your inbox.</p>
+          <h4>📥 Download Your Free Accompanying PDF Guide</h4>
+          <p>Get our free protocol: <em>"The 7-Day AM Morning Ritual for Healthy Glucose & Daily Vitality"</em>.</p>
           <form class="optin-form" onsubmit="handleOptin(event)">
             <input type="email" class="optin-input" id="subscriber-email" placeholder="Enter your best email..." required>
-            <button type="submit" class="btn-optin">Send Free PDF &rarr;</button>
+            <button type="submit" class="btn-optin">Download Free PDF &rarr;</button>
           </form>
-          <p id="optin-msg" style="display: none; color: #16a34a; font-weight: 700; font-size: 13px; margin-top: 10px;">
-            ✓ Success! Check your inbox shortly for your free 7-Day Protocol PDF.
-          </p>
+          <div id="optin-msg" style="display: none; margin-top: 16px; padding: 14px; background: #dcfce7; border: 1px solid #86efac; border-radius: 8px;">
+            <p style="color: #166534; font-weight: 700; font-size: 14px; margin-bottom: 6px;">
+              ✓ Success! Your PDF guide download has started.
+            </p>
+            <a href="7-day-morning-routine.pdf" download="7-Day-Morning-Routine-Guide.pdf" style="display: inline-block; background: #15803d; color: white; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 700; text-decoration: none; margin-top: 4px;">
+              📥 Click Here to Open / Save PDF Directly
+            </a>
+          </div>
         </div>
 
       </div>
@@ -668,9 +673,16 @@
       const email = document.getElementById('subscriber-email').value;
       if (email) {
         document.getElementById('optin-msg').style.display = 'block';
+
+        // Trigger direct browser download of the PDF lead magnet
+        const a = document.createElement('a');
+        a.href = '7-day-morning-routine.pdf';
+        a.download = '7-Day-Morning-Routine-Guide.pdf';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
         document.getElementById('subscriber-email').value = '';
-        // Save email locally or sync with email marketing tool
-        console.log("Subscriber captured:", email);
       }
     }
   </script>
